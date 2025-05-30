@@ -3,8 +3,6 @@
 /data/raw/
 /data/processed/
 /models/
-*.dvc
-.dvc/
 
 # MLflow
 mlruns/
@@ -14,3 +12,4 @@ mlruns/
 __pycache__/
 *.pyc
 .DS_Store
+/models

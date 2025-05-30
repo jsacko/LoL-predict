@@ -1,1 +1,10 @@
 # Pipelines de versioning de données
+stages:
+  prepare:
+    cmd: python src/data/make_dataset.py
+    deps:
+      - src/data/make_dataset.py
+      - data/raw
+    outs:
+      - raw_data_all_years.csv
+      - new_raw_data_actual_season.csv
