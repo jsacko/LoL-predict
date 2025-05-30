@@ -1,0 +1,2 @@
+mlflow_uri: http://localhost:5000
+experiment_name: lol-prediction-experiment

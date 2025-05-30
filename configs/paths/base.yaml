@@ -1,0 +1,8 @@
+trained_model: models/lgb_model.pkl
+saved_training_data: data/processed/saved_training_data.csv
+processed_x: data/processed/X.csv
+processed_x_next_days: data/processed/X_next_days.csv
+make_dataset.py: src/data/make_dataset.py
+build_features.py: src/features/build_features.py
+train_model.py: src/models/train_model.py
+evaluate_model.py: src/models/evaluate_model.py

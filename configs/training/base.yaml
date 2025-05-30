@@ -1,0 +1,7 @@
+target_col: "result"
+model_params:
+  n_estimators: 82
+  learning_rate: 0.05
+  max_bin: 101
+  verbose: -1
+  n_jobs: 4

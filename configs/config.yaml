@@ -1,0 +1,7 @@
+defaults:
+  - project: base
+  - data: base
+  - model: xgb
+  - training: base
+  - paths: base
+  - tracking: base

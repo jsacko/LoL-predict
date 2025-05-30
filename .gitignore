@@ -1,0 +1,16 @@
+.env
+# DVC
+/data/raw/
+/data/processed/
+/models/
+*.dvc
+.dvc/
+
+# MLflow
+mlruns/
+
+# Système
+*.log
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,86 @@
+project:
+  name: lol-match-predictor
+  version: 1.0
+  description: A machine learning project to predict outcomes of League of Legends
+    matches.
+data:
+  raw_data_dir: data/raw
+  processed_data_dir: data/processed
+  merged_output_file: data/raw/raw_data_all_years.csv
+  download_output_path: data/raw/new_raw_data_actual_season.csv
+  download_url: https://drive.google.com/uc?id=1v6LRphp2kYciU4SXp0PCjEMuev1bDejc
+  previous_season_data_path:
+  - data/raw/2020_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2021_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2022_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2023_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2024_LoL_esports_match_data_from_OraclesElixir.csv
+  url_leaguepedia_api: https://lol.fandom.com/api.php
+  unique_features:
+  - patch
+  - year
+  - playoffs
+  - split
+  - game
+  - date
+  - league
+  features:
+  - monsterkillsownjungle_diff
+  - opp_xpat15_diff
+  - opp_deathsat25_diff
+  - earned gpm_diff
+  - win_rate_last_5_diff
+  - opp_assistsat15_diff
+  - playoffs
+  - csdiffat15_diff
+  - firstbaron_diff
+  - goldspent_diff
+  - win_rate_last_3_diff
+  - wardsplaced_diff
+  - triplekills_diff
+  - assists_diff
+  - monsterkills_diff
+  - firstblood_diff
+  - elo_diff
+  - win_rate_diff
+  - h2h_win_rate_AvsB
+  - wardskilled_diff
+  - team kpm_diff
+  - ckpm_diff
+  - controlwardsbought_diff
+  - totalgold_diff
+  - damagetakenperminute_diff
+  - gamelength_diff
+  - wcpm_diff
+  - bo_type
+  - win_rate_bo_diff
+  - nb_games_diff
+  - win_streak_diff
+model:
+  name: xgboost
+  output_dir: models/
+  output_path: models/xgb_model.pkl
+  parameters:
+    n_estimators: 200
+    learning_rate: 0.1
+    max_depth: 5
+training:
+  target_col: result
+  model_params:
+    n_estimators: 82
+    learning_rate: 0.05
+    max_bin: 101
+    verbose: -1
+    n_jobs: 4
+paths:
+  trained_model: models/lgb_model.pkl
+  saved_training_data: data/processed/saved_training_data.csv
+  processed_x: data/processed/X.csv
+  processed_x_next_days: data/processed/X_next_days.csv
+  make_dataset.py: src/data/make_dataset.py
+  build_features.py: src/features/build_features.py
+  train_model.py: src/models/train_model.py
+  evaluate_model.py: src/models/evaluate_model.py
+tracking:
+  mlflow_uri: http://localhost:5000
+  experiment_name: lol-prediction-experiment
