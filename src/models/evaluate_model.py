@@ -8,7 +8,6 @@ from omegaconf import DictConfig
 import logging
 import mlflow
 import mlflow.sklearn
-import wandb
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
@@ -24,6 +23,7 @@ def evaluate_model(cfg: DictConfig):
     X_validation.drop("result", inplace=True, errors="ignore")
 
     logging.info(f"Evaluating model {cfg["model"]["name"]} with {len(X_validation)} samples")
+    mlflow.set_tracking_uri(cfg["tracking"]["mlflow_uri"])
     mlflow.set_experiment(cfg["model"]["experiment_name"])
     with mlflow.start_run():
         mlflow.log_param("model_name", cfg["model"]["name"])

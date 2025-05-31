@@ -63,9 +63,9 @@ def train_model(cfg: DictConfig):
     # X_validation = X[~X.date.isin(X_saved_train.date)]
     # y_validation = X_validation.result
     # X_validation.drop("result", inplace=True, errors="ignore")
-
+    mlflow.set_tracking_uri(cfg["tracking"]["mlflow_uri"])
+    mlflow.set_experiment(cfg["model"]["experiment_name"])
     with mlflow.start_run():
-        mlflow.set_experiment(cfg["model"]["experiment_name"])
         mlflow.log_params(cfg["training"]["model_params"])
         mlflow.log_param("model_name", model_name)
         mlflow.log_param("features", list(cfg["data"]["features"]))

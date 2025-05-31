@@ -1,10 +1,38 @@
-# Pipelines de versioning de données
 stages:
-  prepare:
+  make_dataset:
     cmd: python src/data/make_dataset.py
     deps:
-      - src/data/make_dataset.py
-      - data/raw
+    - data/raw
+    - src/data/make_dataset.py
+    - configs/data/base.yaml
+    - configs/paths/base.yaml
     outs:
-      - raw_data_all_years.csv
-      - new_raw_data_actual_season.csv
+    - data/processed/new_data_actual_season.csv
+    - data/processed/prev_and_actual_season_data.csv
+  build_features:
+    cmd: python src/features/build_features.py
+    deps:
+    - data/processed/prev_and_actual_season_data.csv
+    - configs/data/base.yaml
+    - configs/paths/base.yaml
+    outs:
+    - data/processed/X.csv
+    - data/processed/X_next_days.csv
+  train_model:
+    cmd: python src/models/train_model.py
+    deps:
+    - data/processed/X.csv
+    - data/processed/saved_training_data.csv
+    - configs/paths/base.yaml
+    - configs/tracking/base.yaml
+    - configs/model
+    outs:
+    - models/
+  evaluate_model:
+    cmd: python src/models/evaluate_model.py
+    deps:
+    - models/
+    - data/processed/saved_training_data.csv
+    - configs/model
+    - configs/paths/base.yaml
+    - configs/tracking/base.yaml

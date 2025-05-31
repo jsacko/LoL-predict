@@ -1,0 +1,110 @@
+schema: '2.0'
+stages:
+  make_dataset:
+    cmd: python src/data/make_dataset.py
+    deps:
+    - path: configs/data/base.yaml
+      hash: md5
+      md5: e0df995824fe1fc1bf398ef52815cc56
+      size: 1365
+    - path: configs/paths/base.yaml
+      hash: md5
+      md5: 179764c22a56e67a1f114b4e30d7832a
+      size: 514
+    - path: data/raw
+      hash: md5
+      md5: db610d3790b0b2c05637373e9534c409.dir
+      size: 704947819
+      nfiles: 12
+    - path: src/data/make_dataset.py
+      hash: md5
+      md5: 28a314bdc754bfccc43b65357e6d4090
+      size: 2895
+    outs:
+    - path: data/processed/new_data_actual_season.csv
+      hash: md5
+      md5: cb90ab0ac163a7c5f16807b5473d0aeb
+      size: 42506005
+    - path: data/processed/prev_and_actual_season_data.csv
+      hash: md5
+      md5: 0c6433ed0dc40ec7717db60e102299e6
+      size: 609057738
+  build_features:
+    cmd: python src/features/build_features.py
+    deps:
+    - path: configs/data/base.yaml
+      hash: md5
+      md5: e0df995824fe1fc1bf398ef52815cc56
+      size: 1365
+    - path: configs/paths/base.yaml
+      hash: md5
+      md5: 179764c22a56e67a1f114b4e30d7832a
+      size: 514
+    - path: data/processed/prev_and_actual_season_data.csv
+      hash: md5
+      md5: 0c6433ed0dc40ec7717db60e102299e6
+      size: 609057738
+    outs:
+    - path: data/processed/X.csv
+      hash: md5
+      md5: 22a1efec533fc63b643323f53d018737
+      size: 119152118
+    - path: data/processed/X_next_days.csv
+      hash: md5
+      md5: f9fc0cac95ceefd8e5c6091fd24572af
+      size: 8880
+  train_model:
+    cmd: python src/models/train_model.py
+    deps:
+    - path: configs/model
+      hash: md5
+      md5: 9ca3922f876a4ec7d088bcf35a23a4d8.dir
+      size: 421
+      nfiles: 2
+    - path: configs/paths/base.yaml
+      hash: md5
+      md5: 179764c22a56e67a1f114b4e30d7832a
+      size: 514
+    - path: configs/tracking/base.yaml
+      hash: md5
+      md5: 5da0d786dedb9684f2f7c2a600be895a
+      size: 81
+    - path: data/processed/X.csv
+      hash: md5
+      md5: 22a1efec533fc63b643323f53d018737
+      size: 119152118
+    - path: data/processed/saved_training_data.csv
+      hash: md5
+      md5: 7bc617338066a9cb19db802ead24bcd0
+      size: 30120144
+    outs:
+    - path: models/
+      hash: md5
+      md5: 5a4a65b05dfbeaac220706c866b4a5e6.dir
+      size: 709283
+      nfiles: 2
+  evaluate_model:
+    cmd: python src/models/evaluate_model.py
+    deps:
+    - path: configs/model
+      hash: md5
+      md5: 9ca3922f876a4ec7d088bcf35a23a4d8.dir
+      size: 421
+      nfiles: 2
+    - path: configs/paths/base.yaml
+      hash: md5
+      md5: 179764c22a56e67a1f114b4e30d7832a
+      size: 514
+    - path: configs/tracking/base.yaml
+      hash: md5
+      md5: 5da0d786dedb9684f2f7c2a600be895a
+      size: 81
+    - path: data/processed/saved_training_data.csv
+      hash: md5
+      md5: 7bc617338066a9cb19db802ead24bcd0
+      size: 30120144
+    - path: models/
+      hash: md5
+      md5: 5a4a65b05dfbeaac220706c866b4a5e6.dir
+      size: 709283
+      nfiles: 2

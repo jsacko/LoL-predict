@@ -1,8 +1,7 @@
 raw_data_dir: data/raw
 processed_data_dir: data/processed
 merged_output_file: data/raw/raw_data_all_years.csv
-download_output_path: data/raw/new_raw_data_actual_season.csv
-download_url: https://drive.google.com/uc?id=1v6LRphp2kYciU4SXp0PCjEMuev1bDejc
+download_url_actual_season: https://drive.google.com/uc?id=1v6LRphp2kYciU4SXp0PCjEMuev1bDejc
 previous_season_data_path: 
   - data/raw/2020_LoL_esports_match_data_from_OraclesElixir.csv
   - data/raw/2021_LoL_esports_match_data_from_OraclesElixir.csv

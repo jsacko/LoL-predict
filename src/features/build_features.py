@@ -400,18 +400,11 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
 
 @hydra.main(config_path="../../configs", config_name="config", version_base="1.3") # type: ignore
 def main(cfg: DictConfig):
-    previous_season_data_path = cfg["data"]["previous_season_data_path"]
-    output_path_latest_data = f"{cfg['data']['download_output_path']}"
-    cols_to_be_unique = list(cfg["data"]["unique_features"])
-
-
-    logging.info("Starting feature creation process by reading cleaned files...")
-    df_today_raw_season = pd.read_csv(f"{output_path_latest_data}", index_col="gameid", parse_dates=True, low_memory=False) # Raw data of this season downloaded today
-    df_raw_previous_season = pd.concat([pd.read_csv(f"{file_path}", index_col="gameid",  low_memory=False, parse_dates=True) for file_path in previous_season_data_path])
-    df_today_train = pd.concat([df_raw_previous_season, df_today_raw_season],axis=0)
-
+    
+    df_prev_and_actual_season_data = pd.read_csv(f"{cfg['paths']['prev_and_actual_season_data']}", index_col="gameid", parse_dates=True, low_memory=False)
     logging.info("Creating features from the training data and new match downloaded...")
-    X, dict_stats = create_features_from_df(df_today_train, cols_to_be_unique, include_objects_columns=True)
+    cols_to_be_unique = list(cfg["data"]["unique_features"])
+    X, dict_stats = create_features_from_df(df_prev_and_actual_season_data, cols_to_be_unique, include_objects_columns=True)
     logging.info(f"Features created with shape: {X.shape}")
     path_x = cfg["paths"]["processed_x"]
     X.to_csv(f"{path_x}")
