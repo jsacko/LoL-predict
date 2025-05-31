@@ -1,7 +1,10 @@
 name: "lightgbm"
 output_dir: models/
 output_path: models/lgb_model.pkl
+experiment_name: "lightgbm_default_model_v1"
 parameters:
-  n_estimators: 200
-  learning_rate: 0.1
-  max_depth: 5
+  n_estimators: 82
+  learning_rate: 0.05
+  max_bin: 101
+  verbose: -1
+  n_jobs: 4

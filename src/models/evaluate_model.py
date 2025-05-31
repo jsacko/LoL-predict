@@ -1,10 +1,14 @@
 # Evaluation du modèle
+import mlflow.sklearn
 import pandas as pd
 import joblib
 from sklearn.metrics import accuracy_score, classification_report
 import hydra
 from omegaconf import DictConfig
 import logging
+import mlflow
+import mlflow.sklearn
+import wandb
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
@@ -20,11 +24,22 @@ def evaluate_model(cfg: DictConfig):
     X_validation.drop("result", inplace=True, errors="ignore")
 
     logging.info(f"Evaluating model {cfg["model"]["name"]} with {len(X_validation)} samples")
-    model = joblib.load(cfg["model"]["output_path"])
-    y_pred = model.predict(X_validation)
-
-    print("Accuracy:", accuracy_score(y_validation, y_pred))
-    print(classification_report(y_validation, y_pred))
+    mlflow.set_experiment(cfg["model"]["experiment_name"])
+    with mlflow.start_run():
+        mlflow.log_param("model_name", cfg["model"]["name"])
+        mlflow.log_param("Number of games this season", len(X_validation))
+        mlflow.log_param("Most recent game", X_validation.date.max())
+        model = joblib.load(cfg["model"]["output_path"])
+        mlflow.sklearn.log_model(model, "model") # type: ignore
+        
+        mlflow.log_param("features", list(cfg["data"]["features"]))
+        y_pred = model.predict(X_validation)
+        accuracy = accuracy_score(y_validation, y_pred)
+        classification_report_str = classification_report(y_validation, y_pred)
+        mlflow.log_metric("accuracy", accuracy) # type: ignore
+        mlflow.log_text(classification_report_str, "classification_report.txt") # type: ignore
+        logging.info("Accuracy:", accuracy_score(y_validation, y_pred))
+        logging.info(classification_report)
 
 if __name__ == "__main__":
     evaluate_model()

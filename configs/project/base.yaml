@@ -1,3 +1,6 @@
-name: lol-match-predictor
+name: LoL Predict
+author: Julien SACKO  
+email: sacko_91@outlook.fr
+license: MIT
 version: 1.0
 description: A machine learning project to predict outcomes of League of Legends matches.
