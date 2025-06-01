@@ -10,6 +10,7 @@ import joblib
 import logging
 import mlflow
 import mlflow.sklearn
+import os
 from sklearn.model_selection import cross_val_score
 
 # Entraînement du modèle
@@ -76,6 +77,7 @@ def train_model(cfg: DictConfig):
         mlflow.log_metric("cross_val_score", cv_score.mean())
         mlflow.log_artifact(f"{cfg['paths']['processed_x']}", artifact_path="processed_data")
         logging.info(f"Cross-validation score: {cv_score.mean()}")
+        os.makedirs(cfg["model"]["output_dir"], exist_ok=True)  # Crée le dossier s'il a été supprimé
         joblib.dump(pipeline_model, model_path)
     logging.info(f"Model trained and saved to {model_path} with MLflow tracking")
 

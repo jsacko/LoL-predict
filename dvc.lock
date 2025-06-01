@@ -9,8 +9,8 @@ stages:
       size: 1365
     - path: configs/paths/base.yaml
       hash: md5
-      md5: 179764c22a56e67a1f114b4e30d7832a
-      size: 514
+      md5: b9f80fbd1d2364091a2447cf3b4e1b9a
+      size: 559
     - path: data/raw
       hash: md5
       md5: db610d3790b0b2c05637373e9534c409.dir
@@ -23,12 +23,12 @@ stages:
     outs:
     - path: data/processed/new_data_actual_season.csv
       hash: md5
-      md5: cb90ab0ac163a7c5f16807b5473d0aeb
-      size: 42506005
+      md5: 2dc43183c41e3d480df35f9f38d7d27e
+      size: 42756922
     - path: data/processed/prev_and_actual_season_data.csv
       hash: md5
-      md5: 0c6433ed0dc40ec7717db60e102299e6
-      size: 609057738
+      md5: ee027764f96b267d6d5852097de81c7d
+      size: 609365064
   build_features:
     cmd: python src/features/build_features.py
     deps:
@@ -38,63 +38,67 @@ stages:
       size: 1365
     - path: configs/paths/base.yaml
       hash: md5
-      md5: 179764c22a56e67a1f114b4e30d7832a
-      size: 514
+      md5: b9f80fbd1d2364091a2447cf3b4e1b9a
+      size: 559
     - path: data/processed/prev_and_actual_season_data.csv
       hash: md5
-      md5: 0c6433ed0dc40ec7717db60e102299e6
-      size: 609057738
+      md5: ee027764f96b267d6d5852097de81c7d
+      size: 609365064
     outs:
     - path: data/processed/X.csv
       hash: md5
-      md5: 22a1efec533fc63b643323f53d018737
-      size: 119152118
+      md5: 87a5b2effc93892f9b17aebf2952c1fe
+      size: 119180188
     - path: data/processed/X_next_days.csv
       hash: md5
-      md5: f9fc0cac95ceefd8e5c6091fd24572af
-      size: 8880
+      md5: 811ef548b629a02ba1a7dcc6e657cf35
+      size: 9962
+    - path: data/processed/teams_stats.csv
+      hash: md5
+      md5: 9afa741a1312cc9dface31bedcc873d9
+      size: 188994923
   train_model:
     cmd: python src/models/train_model.py
     deps:
     - path: configs/model
       hash: md5
-      md5: 9ca3922f876a4ec7d088bcf35a23a4d8.dir
-      size: 421
+      md5: 19d9651daeca019fb69cfaf932911f8a.dir
+      size: 419
       nfiles: 2
     - path: configs/paths/base.yaml
       hash: md5
-      md5: 179764c22a56e67a1f114b4e30d7832a
-      size: 514
+      md5: b9f80fbd1d2364091a2447cf3b4e1b9a
+      size: 559
     - path: configs/tracking/base.yaml
       hash: md5
       md5: 5da0d786dedb9684f2f7c2a600be895a
       size: 81
     - path: data/processed/X.csv
       hash: md5
-      md5: 22a1efec533fc63b643323f53d018737
-      size: 119152118
+      md5: 87a5b2effc93892f9b17aebf2952c1fe
+      size: 119180188
     - path: data/processed/saved_training_data.csv
       hash: md5
       md5: 7bc617338066a9cb19db802ead24bcd0
       size: 30120144
     outs:
-    - path: models/
+    - path: models
       hash: md5
-      md5: 5a4a65b05dfbeaac220706c866b4a5e6.dir
-      size: 709283
-      nfiles: 2
+      md5: d3e2683f02e1fe8319c33f65eba4ddbb.dir
+      size: 405352
+      nfiles: 1
   evaluate_model:
     cmd: python src/models/evaluate_model.py
     deps:
     - path: configs/model
       hash: md5
-      md5: 9ca3922f876a4ec7d088bcf35a23a4d8.dir
-      size: 421
+      md5: 19d9651daeca019fb69cfaf932911f8a.dir
+      size: 419
       nfiles: 2
     - path: configs/paths/base.yaml
       hash: md5
-      md5: 179764c22a56e67a1f114b4e30d7832a
-      size: 514
+      md5: b9f80fbd1d2364091a2447cf3b4e1b9a
+      size: 559
     - path: configs/tracking/base.yaml
       hash: md5
       md5: 5da0d786dedb9684f2f7c2a600be895a
@@ -103,8 +107,8 @@ stages:
       hash: md5
       md5: 7bc617338066a9cb19db802ead24bcd0
       size: 30120144
-    - path: models/
+    - path: models
       hash: md5
-      md5: 5a4a65b05dfbeaac220706c866b4a5e6.dir
-      size: 709283
-      nfiles: 2
+      md5: d3e2683f02e1fe8319c33f65eba4ddbb.dir
+      size: 405352
+      nfiles: 1

@@ -8,3 +8,4 @@ build_features.py: src/features/build_features.py
 train_model.py: src/models/train_model.py
 evaluate_model.py: src/models/evaluate_model.py
 actual_season_data: data/processed/new_data_actual_season.csv
+teams_stats: data/processed/teams_stats.csv

@@ -1,5 +1,5 @@
 name: "xgboost"
-output_dir: models/
+output_dir: models
 output_path: models/xgb_model.pkl
 experiment_name: "xgboost_default_model_v1"
 parameters:

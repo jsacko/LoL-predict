@@ -18,6 +18,7 @@ stages:
     outs:
     - data/processed/X.csv
     - data/processed/X_next_days.csv
+    - data/processed/teams_stats.csv
   train_model:
     cmd: python src/models/train_model.py
     deps:
@@ -27,11 +28,11 @@ stages:
     - configs/tracking/base.yaml
     - configs/model
     outs:
-    - models/
+    - models
   evaluate_model:
     cmd: python src/models/evaluate_model.py
     deps:
-    - models/
+    - models
     - data/processed/saved_training_data.csv
     - configs/model
     - configs/paths/base.yaml

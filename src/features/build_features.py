@@ -3,6 +3,7 @@
 import pandas as pd
 import logging
 import yaml
+import json
 from pathlib import Path
 import numpy as np
 from datetime import datetime, timedelta
@@ -404,17 +405,18 @@ def main(cfg: DictConfig):
     df_prev_and_actual_season_data = pd.read_csv(f"{cfg['paths']['prev_and_actual_season_data']}", index_col="gameid", parse_dates=True, low_memory=False)
     logging.info("Creating features from the training data and new match downloaded...")
     cols_to_be_unique = list(cfg["data"]["unique_features"])
-    X, dict_stats = create_features_from_df(df_prev_and_actual_season_data, cols_to_be_unique, include_objects_columns=True)
+    X, teams_stats = create_features_from_df(df_prev_and_actual_season_data, cols_to_be_unique, include_objects_columns=True)
     logging.info(f"Features created with shape: {X.shape}")
     path_x = cfg["paths"]["processed_x"]
     X.to_csv(f"{path_x}")
     logging.info(f"""Features created and saved to {path_x} successfully. 
                     Now creating features for the next day matches...""")
-    df_next_day = create_features_from_tomorrow_game(dict_stats, cfg)
-    logging.info(f"Next day features created with shape: {df_next_day.shape}")
+    df_next_day = create_features_from_tomorrow_game(teams_stats, cfg)
     path_x_next_days = cfg["paths"]["processed_x_next_days"]
     df_next_day.to_csv(f"{path_x_next_days}")
-    logging.info(f"Next day features created and saved to {path_x_next_days}")
+    logging.info(f"Next day features created with shape: {df_next_day.shape} and saved to {path_x_next_days}")
+    json.dump(teams_stats, open(cfg["paths"]["teams_stats"], "w"), indent=4)
+    logging.info(f"Teams stats saved to {cfg['paths']['teams_stats']} successfully.")
     logging.info("Feature creation completed successfully.")
 
 if __name__ == "__main__":
