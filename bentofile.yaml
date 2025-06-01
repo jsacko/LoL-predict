@@ -1,0 +1,20 @@
+service: "bento_service:svc"
+labels:
+  owner: sacko
+  stage: dev
+include:
+  - "app/"
+  - "models/"
+  - "configs/"
+  - "data/processed/teams_stats.csv"
+  - "bento_service.py"
+python:
+  packages:
+    - pandas
+    - scikit-learn
+    - xgboost
+    - bentoml
+    - joblib
+    - omegaconf
+    - hydra-core
+    - numpy

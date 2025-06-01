@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import logging
 import json
+import os
 from omegaconf import DictConfig
 
 
@@ -9,8 +10,13 @@ from omegaconf import DictConfig
 def build_features_from_teamnames(cfg:DictConfig, teamnameA:str, teamnameB:str, bo_type:str = "1") -> pd.DataFrame:
     features = cfg["data"]["features"]
     row = pd.DataFrame(columns=features)
+    # get path root projet
+    path_root = os.path.dirname(os.path.abspath(__file__))
+    root_project = os.path.dirname(path_root)
+    # get teams stats path
     teams_stats_path = cfg["paths"]["teams_stats"]
-    with open(teams_stats_path, "r") as f:
+    file_path = os.path.join(root_project, teams_stats_path)
+    with open(file_path, "r") as f:
         teams_stats = json.load(f) 
     logging.info(f"Loaded teams stats from {teams_stats_path}")
     if teamnameA not in teams_stats or teamnameB not in teams_stats:

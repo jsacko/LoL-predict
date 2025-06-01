@@ -12,6 +12,7 @@ import mlflow
 import mlflow.sklearn
 import os
 from sklearn.model_selection import cross_val_score
+import bentoml
 
 # Entraînement du modèle
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -79,6 +80,10 @@ def train_model(cfg: DictConfig):
         logging.info(f"Cross-validation score: {cv_score.mean()}")
         os.makedirs(cfg["model"]["output_dir"], exist_ok=True)  # Crée le dossier s'il a été supprimé
         joblib.dump(pipeline_model, model_path)
+        bentoml.sklearn.save_model(model_name, pipeline_model, signatures={
+            "predict": {"batchable": True},
+            "predict_proba": {"batchable": True}
+        })
     logging.info(f"Model trained and saved to {model_path} with MLflow tracking")
 
 if __name__ == "__main__":
