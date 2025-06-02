@@ -18,3 +18,4 @@ python:
     - omegaconf
     - hydra-core
     - numpy
+    - prometheus_client
