@@ -401,7 +401,7 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
 
 @hydra.main(config_path="../../configs", config_name="config", version_base="1.3") # type: ignore
 def main(cfg: DictConfig):
-    
+    project_root = hydra.utils.get_original_cwd()
     df_prev_and_actual_season_data = pd.read_csv(f"{cfg['paths']['prev_and_actual_season_data']}", index_col="gameid", parse_dates=True, low_memory=False)
     logging.info("Creating features from the training data and new match downloaded...")
     cols_to_be_unique = list(cfg["data"]["unique_features"])

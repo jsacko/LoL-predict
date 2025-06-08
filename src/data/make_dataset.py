@@ -40,21 +40,21 @@ def main(cfg: DictConfig):
     #     logging.info(f"Saved merged dataset to {output_file}")
 
     # logging.info(f"Preview of merged dataset:\n{df_all.head()}")
-
-    output_path_latest_data = f"{cfg['paths']['actual_season_data']}"
-    download_url_latest_data = cfg["data"]["download_url_actual_season"]
+    project_root = hydra.utils.get_original_cwd()
+    output_path_latest_data = f"{project_root}/{cfg['paths']['actual_season_data']}"
+    download_url_latest_data = f"{cfg['data']['download_url_actual_season']}"
     logging.info("Downloading latest data...")
     download_latest_data(download_url_latest_data, output_path_latest_data)
     if os.path.exists(output_path_latest_data):
         logging.info(f"Latest data downloaded to {output_path_latest_data}")
     else:
         logging.error(f"Failed to download latest data to {output_path_latest_data}")
-    previous_season_data_path = cfg["data"]["previous_season_data_path"]
+    previous_season_data_path = cfg['data']['previous_season_data_path']
     logging.info("Concatenating relevant previous season data with the actual season...")
-    df_raw_actual_season = pd.read_csv(f"{output_path_latest_data}", index_col="gameid", parse_dates=True, low_memory=False) # Raw data of this season downloaded today
-    df_raw_previous_season = pd.concat([pd.read_csv(f"{file_path}", index_col="gameid",  low_memory=False, parse_dates=True) for file_path in previous_season_data_path])
+    df_raw_actual_season = pd.read_csv(output_path_latest_data, index_col="gameid", parse_dates=True, low_memory=False) # Raw data of this season downloaded today
+    df_raw_previous_season = pd.concat([pd.read_csv(f"{project_root}/{file_path}", index_col="gameid",  low_memory=False, parse_dates=True) for file_path in previous_season_data_path])
     df_prev_and_actual_season = pd.concat([df_raw_previous_season, df_raw_actual_season],axis=0)
-    df_prev_and_actual_season.to_csv(f"{cfg['paths']['prev_and_actual_season_data']}")
+    df_prev_and_actual_season.to_csv(f"{project_root}/{cfg['paths']['prev_and_actual_season_data']}")
 
 if __name__ == "__main__":
     main()

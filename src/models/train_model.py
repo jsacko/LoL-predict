@@ -56,7 +56,7 @@ def train_model(cfg: DictConfig):
     ("preprocess", preprocessor),
     ("model", model)
     ])
-    X_processed = pd.read_csv(f"{cfg["paths"]["processed_x"]}")
+    X_processed = pd.read_csv(f"{cfg['paths']['processed_x']}")
     X_saved_train = pd.read_csv(f"{cfg['paths']['saved_training_data']}")
     X = X_processed[X_processed.date.isin(X_saved_train.date)]
     y = X[cfg["training"]["target_col"]]

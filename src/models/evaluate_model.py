@@ -22,7 +22,7 @@ def evaluate_model(cfg: DictConfig):
     y_validation = X_validation.result
     X_validation.drop("result", inplace=True, errors="ignore")
 
-    logging.info(f"Evaluating model {cfg["model"]["name"]} with {len(X_validation)} samples")
+    logging.info(f"Evaluating model {cfg['model']['name']} with {len(X_validation)} samples")
     mlflow.set_tracking_uri(cfg["tracking"]["mlflow_uri"])
     mlflow.set_experiment(cfg["model"]["experiment_name"])
     with mlflow.start_run():

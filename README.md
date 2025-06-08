@@ -1,8 +1,11 @@
 # LoL-predict
 A repository featuring a notebook that builds an AI using scikit-learn to predict the outcome of League of Legends games, along with a website where users can vote and compete against the AI.4
 
-# Instructions utilisateur
+I choose locally the apache workflow version 2.10.3, because it was the latest version available in Amazon MWAA to simplify the migration
 
+# Instructions utilisateur
+You must use python 3.11 (apache workflow)
+docker-compose -d up to launch the API and being monitored wit  Grafana and Promotheus 
 ## 1. Entraîner et sauvegarder le modèle dans le store local BentoML
 python train_model.py
 

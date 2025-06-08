@@ -1,19 +1,18 @@
-# Dockerfile
 FROM python:3.10
 
-WORKDIR /app
+WORKDIR app
 
-COPY app ./app
-COPY models ./configs
-COPY configs ./configs
-COPY data/processed/teams_stats.csv ./data/processed/teams_stats.csv
-COPY bento_service.py .
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY ./src ./src
+COPY ./configs ./configs
 
-RUN pip install --upgrade pip
-# BentoML CLI pour le service
-RUN pip install bentoml prometheus_client hydra-core omegaconf scikit-learn pandas numpy scikit-learn joblib
+RUN mkdir -p data/raw data/processed
 
-EXPOSE 3000
-EXPOSE 8001
-
-CMD ["bentoml", "serve", "./bento_service.py"]
+COPY ./data/raw/2024_LoL_esports_match_data_from_OraclesElixir.csv ./data/raw/2024_LoL_esports_match_data_from_OraclesElixir.csv
+COPY ./data/raw/2023_LoL_esports_match_data_from_OraclesElixir.csv ./data/raw/2023_LoL_esports_match_data_from_OraclesElixir.csv
+COPY ./data/raw/2022_LoL_esports_match_data_from_OraclesElixir.csv ./data/raw/2022_LoL_esports_match_data_from_OraclesElixir.csv
+COPY ./data/raw/2021_LoL_esports_match_data_from_OraclesElixir.csv ./data/raw/2021_LoL_esports_match_data_from_OraclesElixir.csv
+COPY ./data/raw/2020_LoL_esports_match_data_from_OraclesElixir.csv ./data/raw/2020_LoL_esports_match_data_from_OraclesElixir.csv
+COPY ./data/processed/saved_training_data.csv ./data/processed/saved_training_data.csv
+COPY ./data/processed/X.csv ./data/processed/X.csv

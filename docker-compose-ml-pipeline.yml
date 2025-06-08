@@ -1,6 +1,11 @@
 version: "3.8"
 
 services:
+  lol-predict-ml-pipeline:
+    image: lol-predict-ml-pipeline:latest
+    entrypoint: /bin/bash
+    tty: true
+    stdin_open: true # Simule un terminal
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.12.1
     container_name: mlflow_server
