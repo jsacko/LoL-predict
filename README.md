@@ -1,4 +1,4 @@
-# 🧠 League of Legends Match Outcome Prediction – End-to-End MLOps Pipeline
+# End-to-End MLOps Pipeline - League of Legends Match Outcome Prediction 
 
 This project is a complete MLOps pipeline that predicts the outcome of **League of Legends esports matches**, from data collection to automated predictions and deployment. Designed for **production-level automation**, it simulates real-world workflows for machine learning systems.
 
