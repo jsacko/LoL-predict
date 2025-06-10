@@ -324,7 +324,7 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
     url_leaguepedia = cfg["data"]["url_leaguepedia_api"]
     features = cfg["data"]["features"]
     tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
-    
+    print("tomorrow",tomorrow)
 
     # Prepare the parameters for the API request
     params = {
@@ -353,12 +353,13 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
             for m in results
         ]
         df = pd.DataFrame(match_data)
-        df["date"] = pd.to_datetime(df["date"]).dt.date
+        df["date"] = pd.to_datetime(df["date"])
         
         # Étape 3 : Trouver la date de la prochaine journée (la première date du DataFrame)
         if not df.empty:
+            # Take the game of the 3 next days
             next_match_day = df["date"].min()
-            df_next_day = df[df["date"] == next_match_day]
+            df_next_day = df[(df["date"] >= next_match_day) & (df["date"] <= next_match_day + timedelta(days=2))]
         else:
             logging.info("No matches upcoming for")
             df_next_day = pd.DataFrame()
@@ -401,7 +402,6 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
 
 @hydra.main(config_path="../../configs", config_name="config", version_base="1.3") # type: ignore
 def main(cfg: DictConfig):
-    project_root = hydra.utils.get_original_cwd()
     df_prev_and_actual_season_data = pd.read_csv(f"{cfg['paths']['prev_and_actual_season_data']}", index_col="gameid", parse_dates=True, low_memory=False)
     logging.info("Creating features from the training data and new match downloaded...")
     cols_to_be_unique = list(cfg["data"]["unique_features"])
@@ -411,9 +411,11 @@ def main(cfg: DictConfig):
     X.to_csv(f"{path_x}")
     logging.info(f"""Features created and saved to {path_x} successfully. 
                     Now creating features for the next day matches...""")
+    # teams_stats = json.load(open(cfg["paths"]["teams_stats"]))
     df_next_day = create_features_from_tomorrow_game(teams_stats, cfg)
     path_x_next_days = cfg["paths"]["processed_x_next_days"]
     df_next_day.to_csv(f"{path_x_next_days}")
+    print("date min", df_next_day.date.min())
     logging.info(f"Next day features created with shape: {df_next_day.shape} and saved to {path_x_next_days}")
     json.dump(teams_stats, open(cfg["paths"]["teams_stats"], "w"), indent=4)
     logging.info(f"Teams stats saved to {cfg['paths']['teams_stats']} successfully.")

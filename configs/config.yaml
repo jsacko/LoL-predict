@@ -4,4 +4,4 @@ defaults:
   - model: xgb
   - training: base
   - paths: base
-  - tracking: docker
+  - tracking: base

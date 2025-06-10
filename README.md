@@ -33,9 +33,14 @@ docker-compose up -d
 - [X] Versionning dataset and model :
     - [X] DVC 
     - [X] ML Flow
-- [] Workflow with Airflow or Prefect
+- [X] Workflow with Airflow or Prefect
 - [] Website
 
+Option A – Cloud Run (GCP) : déploiement facile de container, scalabilité automatique, HTTP natif.
+
+Option B – AWS SageMaker + API Gateway : très "entreprise", plus complexe.
+
+Option C – Hugging Face Spaces (si modèle léger) : très rapide à mettre en place, impressionne par sa simplicité.
 
 Model packaged in a docker container and deployed as a micro service (Docker)
 Offer batch prediction to update recommendations nigthly (Prefect)
@@ -46,7 +51,7 @@ Shadow deployments or circuit breakers so if my ML service fails, the system can
 # Level 4 
 - [] AWS Sagemaker, Vertex AI or Azure ML (Faire au retour)
 - [] Orchestration with Kurbenetes (Faire au retour)
-- [] Workflow tools like Airflow or Prefect (Faire au retour )
+- [X] Workflow tools like Airflow or Prefect (Faire au retour )
 - [] Pytorch or TensorFlow for custom model development (2nd projet)
 - [] Optimization methods like quantization, knowledge distribution
 - [X] Experiment tracking and hyperparameter tuning with Weights and Biases or MLflow

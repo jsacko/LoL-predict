@@ -68,4 +68,13 @@ with DAG(
         auto_remove=True,
     )
 
-    make_dataset >> build_features >> train_model >> evaluate_model
+    daily_update = DockerOperator(
+        task_id="daily_update",
+        image="lol-predict-lol-predict-ml-pipeline:latest", 
+        command="python src/models/daily_update.py",
+        docker_url="unix://var/run/docker.sock",
+        network_mode="lol-predict_airflow_network", # Access to mlflow server
+        auto_remove=True,
+    )
+
+    make_dataset >> build_features >> train_model >> evaluate_model >> daily_update

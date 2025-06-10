@@ -1,6 +1,10 @@
 # Fonctions utilitaires
 from pathlib import Path
 import yaml
+from supabase import Client, create_client
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 def get_project_root():
     """
@@ -22,3 +26,14 @@ def load_config(path=f"{project_root}/configs/config.yaml") -> dict:
     with open(path,"r") as f:
         config = yaml.safe_load(f)
     return config
+
+def get_supabase_client():
+    """
+    Returns a Supabase client instance.
+    """
+    config = load_config()
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_KEY")
+    if (not url or not key):
+        raise ValueError("Supabase URL and Key must be set in environment variables.")
+    return create_client(url, key)

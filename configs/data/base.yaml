@@ -10,6 +10,7 @@ previous_season_data_path:
   - data/raw/2024_LoL_esports_match_data_from_OraclesElixir.csv
 url_leaguepedia_api: https://lol.fandom.com/api.php
 unique_features: ["patch","year","playoffs","split","game","date","league"]
+cols_website:  ["teamnameA", "teamnameB", "result", "date","bo_id","league"]
 features: 
   - monsterkillsownjungle_diff
   - opp_xpat15_diff

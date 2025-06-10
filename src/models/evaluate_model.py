@@ -38,8 +38,9 @@ def evaluate_model(cfg: DictConfig):
         classification_report_str = classification_report(y_validation, y_pred)
         mlflow.log_metric("accuracy", accuracy) # type: ignore
         mlflow.log_text(classification_report_str, "classification_report.txt") # type: ignore
-        logging.info("Accuracy:", accuracy_score(y_validation, y_pred))
+        logging.info("Accuracy:", accuracy)
         logging.info(classification_report)
+        logging.info("Model evaluation completed successfully.")
 
 if __name__ == "__main__":
     evaluate_model()

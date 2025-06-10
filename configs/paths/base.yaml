@@ -2,6 +2,7 @@ trained_model: models/lgb_model.pkl
 prev_and_actual_season_data: data/processed/prev_and_actual_season_data.csv
 processed_x: data/processed/X.csv
 processed_x_next_days: data/processed/X_next_days.csv
+next_days_prediction: data/processed/next_days_prediction.csv
 saved_training_data: data/processed/saved_training_data.csv
 make_dataset.py: src/data/make_dataset.py
 build_features.py: src/features/build_features.py
