@@ -7,8 +7,10 @@ This project is a complete MLOps pipeline that predicts the outcome of **League 
 ## 🔍 Project Overview
 
 The goal is to automatically train, evaluate, and serve a predictive model that forecasts the winner of a LoL match given two competing teams. The system runs daily, updates with new data, makes predictions, and stores results in a live database.
-The model reaches 67% accuracy, delivering both real-time predictions and daily batch forecasts, and is deployed through a live web platform where users can compete against the AI by submitting their own predictions.
-This project reflects a solid blend of data science, MLOps, and full-stack engineering, emphasizing automation, scalability, and user interaction—just like in a real-world tech environment.
+
+The model reaches **67% accuracy**, delivering both real-time predictions and daily batch forecasts, and is deployed through a live web platform where users can compete against the AI by submitting their own predictions.
+
+This project reflects a solid blend of data science, **MLOps**, and **full-stack engineering**, emphasizing **automation**, **scalability**, and **user interactio**n—just like in a real-world tech environment.
 
 ### ✅ Key Features
   
