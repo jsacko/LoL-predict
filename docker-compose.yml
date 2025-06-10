@@ -31,8 +31,46 @@ services:
     networks:
       - monitoring
 
-networks:
-  monitoring:
+  lolpredict_airflow:
+    image: apache/airflow:2.10.3-python3.10
 
+    volumes:
+      - ./airflow:/opt/airflow
+      - //var/run/docker.sock:/var/run/docker.sock # ← ⚠️ sur Windows, parfois il faut les doubles slashes
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    ports:
+      - "8080:8080"
+    networks:
+      - airflow_network
+
+    command: airflow standalone
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.12.1
+    container_name: mlflow_server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlflow/mlruns:/mlflow/mlruns
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /mlflow/mlruns
+      --host 0.0.0.0
+      --port 5000
+    working_dir: /mlflow/mlruns
+    networks:
+      - airflow_network
+  lol-predict-ml-pipeline:
+    build:
+      dockerfile: Dockerfile
+
+networks:
+  airflow_network:
+  monitoring:
 volumes:
+  lol-predict-airflow-storage:
+    driver: local
   grafana-storage:
+    driver: local
+  
