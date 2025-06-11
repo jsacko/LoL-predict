@@ -167,7 +167,8 @@ Response:
 
 🧪 Cloud-ready with AWS (ECR + ECS)
 
-🔧 The site is under maintenance 
+🔧 The website is deployed ! 
+https://lol-predictions-kappa.vercel.app/
 
 ---
 
