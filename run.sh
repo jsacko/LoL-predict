@@ -10,6 +10,7 @@ mlflow server \
 sleep 10  # attendre que le serveur MLflow démarre
 
 # Exécuter l'entraînement
-python pipelines/pipeline.py
+echo "Running pipeline..."
+python src/pipelines/pipeline.py
 
 # Terminer proprement
