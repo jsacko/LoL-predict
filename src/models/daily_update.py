@@ -100,7 +100,6 @@ def update_database(cfg: DictConfig):
     """
     Main function to evaluate the model.
     """
-    get_supabase_client()
     project_root = hydra.utils.get_original_cwd()
     X = pd.read_csv(f"{cfg['paths']['processed_x']}")
     X_next_days = pd.read_csv(f"{cfg['paths']['processed_x_next_days']}")
