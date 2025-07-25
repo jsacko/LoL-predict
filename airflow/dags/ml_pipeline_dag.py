@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 from docker.types import Mount
 import subprocess
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 data_path = Path(__file__).resolve().parent.parent
 
@@ -23,7 +25,7 @@ with DAG(
     dag_id="ml_pipeline_dag",
     default_args=default_args,
     start_date=datetime(2025, 5, 3),
-    schedule_interval="0 2 * * *",  # tous les jours à 2h
+    schedule="0 2 * * *",  # tous les jours à 2h
     catchup=False,
 
 ) as dag:
@@ -35,7 +37,7 @@ with DAG(
         docker_url="unix://var/run/docker.sock",
         mounts= [Mount(source="lol-predict-airflow-storage", target="/app/data/processed", type="volume")], # Store processed data in a Docker volume
         mount_tmp_dir=False,  #
-        auto_remove=True,    
+        auto_remove="success",    
     )
 
     build_features = DockerOperator(
@@ -45,7 +47,7 @@ with DAG(
         docker_url="unix://var/run/docker.sock",
         mounts= [Mount(source="lol-predict-airflow-storage", target="/app/data/processed", type="volume")], # Use processed data from the Docker volume
         mount_tmp_dir=False, 
-        auto_remove=True,
+        auto_remove="success",
     )
 
     train_model = DockerOperator(
@@ -55,7 +57,7 @@ with DAG(
         docker_url="unix://var/run/docker.sock",
         mounts= [Mount(source="lol-predict-airflow-storage", target="/app/models", type="volume")], # Store trained models in a Docker volume
         network_mode="lol-predict_airflow_network", # Access to mlflow server
-        auto_remove=True,
+        auto_remove="success",
     )
 
     evaluate_model = DockerOperator(
@@ -65,7 +67,7 @@ with DAG(
         docker_url="unix://var/run/docker.sock",
         mounts= [Mount(source="lol-predict-airflow-storage", target="/app/models", type="volume")], # Use trained models from the Docker volume
         network_mode="lol-predict_airflow_network", # Access to mlflow server
-        auto_remove=True,
+        auto_remove="success",    
     )
 
     daily_update = DockerOperator(
@@ -73,8 +75,16 @@ with DAG(
         image="lol-predict-lol-predict-ml-pipeline:latest", 
         command="python src/models/daily_update.py",
         docker_url="unix://var/run/docker.sock",
+        environment={
+        'SUPABASE_KEY': '{{ var.value.SUPABASE_KEY }}',
+        'SUPABASE_URL': '{{ var.value.SUPABASE_URL }}',
+        },
+        mounts=[
+        Mount(source="lol-predict-airflow-storage", target="/app/data/processed", type="volume"),
+        Mount(source="lol-predict-airflow-storage", target="/app/models", type="volume"),
+        ],
         network_mode="lol-predict_airflow_network", # Access to mlflow server
-        auto_remove=True,
+        auto_remove="success",    
     )
 
     make_dataset >> build_features >> train_model >> evaluate_model >> daily_update

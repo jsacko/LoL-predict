@@ -11,3 +11,9 @@ evaluate_model.py: src/models/evaluate_model.py
 daily_update.py: src/models/daily_update.py
 actual_season_data: data/processed/new_data_actual_season.csv
 teams_stats: data/processed/teams_stats.csv
+previous_season: 
+  - data/raw/2020_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2021_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2022_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2023_LoL_esports_match_data_from_OraclesElixir.csv
+  - data/raw/2024_LoL_esports_match_data_from_OraclesElixir.csv

@@ -4,12 +4,18 @@ import pandas as pd
 import numpy as np
 import joblib
 from sklearn.metrics import accuracy_score
+from supabase import Client, create_client
 import hydra
 from omegaconf import DictConfig
 import logging
+import os
+from dotenv import dotenv_values
+
+
 import mlflow
 import mlflow.sklearn
-from src.utils.helpers import get_supabase_client
+from dotenv import load_dotenv
+load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
@@ -79,6 +85,15 @@ def predict_and_send_to_supabase(cfg, X, y_validation=None):
         
         return None
 
+def get_supabase_client():
+    """
+    Returns a Supabase client instance.
+    """
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_KEY")
+    if (not url or not key):
+        raise ValueError("Supabase URL and Key must be set in environment variables.")
+    return create_client(url, key)
 
 @hydra.main(config_path="../../configs", config_name="config", version_base="1.3") # type: ignore
 def update_database(cfg: DictConfig):

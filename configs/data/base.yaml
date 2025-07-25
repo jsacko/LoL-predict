@@ -2,6 +2,13 @@ raw_data_dir: data/raw
 processed_data_dir: data/processed
 merged_output_file: data/raw/raw_data_all_years.csv
 download_url_actual_season: https://drive.google.com/uc?id=1v6LRphp2kYciU4SXp0PCjEMuev1bDejc
+download_url_previous_season: 
+  - https://drive.google.com/uc?id=1dlSIczXShnv1vIfGNvBjgk-thMKA5j7d
+  - https://drive.google.com/uc?id=1fzwTTz77hcnYjOnO9ONeoPrkWCoOSecA
+  - https://drive.google.com/uc?id=1EHmptHyzY8owv0BAcNKtkQpMwfkURwRy
+  - https://drive.google.com/uc?id=1XXk2LO0CsNADBB1LRGOV5rUpyZdEZ8s2
+  - https://drive.google.com/uc?id=1IjIEhLc9n8eLKeY-yh_YigKVWbhgGBsN
+
 previous_season_data_path: 
   - data/raw/2020_LoL_esports_match_data_from_OraclesElixir.csv
   - data/raw/2021_LoL_esports_match_data_from_OraclesElixir.csv
@@ -11,6 +18,7 @@ previous_season_data_path:
 url_leaguepedia_api: https://lol.fandom.com/api.php
 unique_features: ["patch","year","playoffs","split","game","date","league"]
 cols_website:  ["teamnameA", "teamnameB", "result", "date","bo_id","league"]
+academic_leagues: ["PRMP","AOL","TAL", "LCKC","LJLA","CBLOLA", "LCSA", "LAS","GSG","AC",  "Prime League 2nd Division", "A1 eSports Legends Cup", "NACL", "LDL", "2025 Asia Masters", "Prime League 3rd Division", "Prime Pokal 2025", "Circuito Tormenta 2025"]
 features: 
   - monsterkillsownjungle_diff
   - opp_xpat15_diff

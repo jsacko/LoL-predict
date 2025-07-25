@@ -32,14 +32,14 @@ REQUEST_LATENCY = Summary("predict_latency_seconds", "Response time in seconds")
 @REQUEST_LATENCY.time()
 def predict(input) -> dict:
     """Endpoint to predict the result of a match between two teams.
-    This function takes the names of two teams and the path (optional) to their statistics
+    This function takes the names of two teams and the type of Best of (default is "1" for best of 1).
     Args:
         teamnameA (str): Name of team A.
         teamnameB (str): Name of team B.
         bo_type (str): Type of match (default is "1" for best of 1).
         
     Returns:
-        dict: A dictionary containing the predicted winner and confidence level, or an error message if the prediction fails.
+        dict: A JSON object containing the predicted winner and confidence level, or an error message if the prediction fails.
     """
     REQUEST_COUNT.inc()  # Increment the request count metric
     # Exemple d'extraction et feature engineering

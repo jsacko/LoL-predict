@@ -8,13 +8,19 @@ include:
   - "configs/"
   - "data/processed/teams_stats.csv"
   - "bento_service.py"
+exclude:
+  - "airflow/"
+  - ".venv/"
+  - "__pycache__/"
+  - "*.pyc"
+
 python:
   packages:
     - pandas
-    - scikit-learn
+    - scikit-learn==1.6.1
     - xgboost
     - bentoml
-    - joblib
+    - joblib==1.5.1
     - omegaconf
     - hydra-core
     - numpy

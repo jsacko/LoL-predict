@@ -13,10 +13,11 @@ from omegaconf import DictConfig
 import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-def winner_series_filtering(df, cols_to_be_unique):
+def winner_series_filtering(df, cols_to_be_unique, cfg):
     # Load configuration
     # Drop games not complete
     new_df = df[df["datacompleteness"] == "complete"]
+    new_df = new_df[~new_df["league"].isin(list(cfg["data"]["academic_leagues"]))]
 
     # Define columns to be removed and drop them (useless columns)
     useless_columns = (
@@ -158,14 +159,14 @@ def aggregate_bo(df, cols_to_be_unique, include_objects_columns=False):
     # Return the final DataFrame with team statistics by Bo series
     return X
 
-def create_features_from_df(df, cols_to_be_unique, include_objects_columns=False):
+def create_features_from_df(df, cols_to_be_unique, cfg, include_objects_columns=False):
     # Load configuration
     BASE_ELO = 1500  # Starting ELO for new teams
     K_FACTOR = 45  # ELO adjustment speed
     WINDOW_SIZE = 1  # Number of past matches to compute rolling averages
     WINDOW_RECENT = 5
 
-    new_df = winner_series_filtering(df, cols_to_be_unique)
+    new_df = winner_series_filtering(df, cols_to_be_unique, cfg)
     new_df = select_teams_rows(new_df)
 
     nums_cols_avg_stats = new_df.select_dtypes(include="number").columns.tolist()
@@ -353,13 +354,14 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
             for m in results
         ]
         df = pd.DataFrame(match_data)
+        df = df[~df["league"].isin(cfg["data"]["academic_leagues"])] # Exclude academic leagues
         df["date"] = pd.to_datetime(df["date"])
         
         # Étape 3 : Trouver la date de la prochaine journée (la première date du DataFrame)
         if not df.empty:
             # Take the game of the 3 next days
             next_match_day = df["date"].min()
-            df_next_day = df[(df["date"] >= next_match_day) & (df["date"] <= next_match_day + timedelta(days=2))]
+            df_next_day = df[(df["date"] >= next_match_day) & (df["date"] <= next_match_day + timedelta(days=30))]
         else:
             logging.info("No matches upcoming for")
             df_next_day = pd.DataFrame()
@@ -376,8 +378,10 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
                 elif (col == "win_rate_diff"):
                     row[col] = np.mean(dict_stats.get(row.teamnameA).get("result")) - np.mean(dict_stats.get(row.teamnameB).get("result"))
                 elif (col == "win_rate_bo_diff"):
-                    win_rate_bo_A = np.mean(dict_stats[row.teamnameA][f"bo_{row['bo_type']}"]) if len(dict_stats[row.teamnameA][f"bo_{row['bo_type']}"]) >= 1 else np.mean(dict_stats.get(row.teamnameA).get("result"))
-                    win_rate_bo_B = np.mean(dict_stats[row.teamnameB][f"bo_{row['bo_type']}"]) if len(dict_stats[row.teamnameB][f"bo_{row['bo_type']}"]) >= 1 else np.mean(dict_stats.get(row.teamnameB).get("result"))
+                    bo_A = dict_stats[row.teamnameA].get(f"bo_{row['bo_type']}")
+                    bo_B = dict_stats[row.teamnameB].get(f"bo_{row['bo_type']}")
+                    win_rate_bo_A = np.mean(bo_A) if bo_A is not None and len(bo_A) >= 1 else np.mean(dict_stats.get(row.teamnameA).get("result"))
+                    win_rate_bo_B = np.mean(bo_B) if bo_B is not None and len(bo_B) >= 1 else np.mean(dict_stats.get(row.teamnameB).get("result"))
                     row[col] = win_rate_bo_A - win_rate_bo_B
                 elif (col == "nb_games_diff"):
                     row[col] = len(dict_stats.get(row.teamnameA).get("result")) - len(dict_stats.get(row.teamnameB).get("result"))
@@ -405,7 +409,7 @@ def main(cfg: DictConfig):
     df_prev_and_actual_season_data = pd.read_csv(f"{cfg['paths']['prev_and_actual_season_data']}", index_col="gameid", parse_dates=True, low_memory=False)
     logging.info("Creating features from the training data and new match downloaded...")
     cols_to_be_unique = list(cfg["data"]["unique_features"])
-    X, teams_stats = create_features_from_df(df_prev_and_actual_season_data, cols_to_be_unique, include_objects_columns=True)
+    X, teams_stats = create_features_from_df(df_prev_and_actual_season_data, cols_to_be_unique, cfg, include_objects_columns=True)
     logging.info(f"Features created with shape: {X.shape}")
     path_x = cfg["paths"]["processed_x"]
     X.to_csv(f"{path_x}")
@@ -421,5 +425,23 @@ def main(cfg: DictConfig):
     logging.info(f"Teams stats saved to {cfg['paths']['teams_stats']} successfully.")
     logging.info("Feature creation completed successfully.")
 
+    # Etude des équipes académiques
+    # df=winner_series_filtering(df_prev_and_actual_season_data, cols_to_be_unique, cfg)
+    # df = select_teams_rows(df)
+    # print("df shape", df.shape)
+    # # Leagues with academic teams
+    # academic_keywords = ["Academy","Youth","Scholars","Rookies","Challengers","Talents"]
+    # df_academic = pd.DataFrame()
+    # for academic_keyword in academic_keywords:
+    #     df_academic = pd.concat([df_academic, df[df["teamname"].str.contains(academic_keyword, case=False, na=False)]])
+    # count_by_league = df_academic.drop_duplicates().groupby("league").size().reset_index(name="nb_academy_teams")
+    # games_by_league = df.groupby("league").size().reset_index(name="nb_games")
+    # count_by_league = pd.merge(count_by_league, games_by_league, on="league")
+    # count_by_league["percentage"] = count_by_league["nb_academy_teams"] / count_by_league["nb_games"]
+    # count_by_league.sort_values("percentage", ascending=False, inplace=True)
+    # print("leagues", df_academic.league.unique())
+    # print("df academic shape", df_academic.shape)
+    # print("df academic", df_academic.teamname.unique())
+    # print("count_by_league", count_by_league)
 if __name__ == "__main__":
     main()

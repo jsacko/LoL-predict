@@ -1,7 +1,14 @@
 .env
 # DVC
-/data/raw/
-/data/processed/
+data/raw/
+
+/data/processed/new_data_actual_season.csv
+/data/processed/teams_stats.csv
+/data/processed/next_days_prediction.csv
+/data/processed/prev_and_actual_season_data.csv
+/data/processed/raw_data_all_years.csv
+/data/processed/X_next_days.csv
+/data/processed/X.csv
 /models/
 
 # MLflow
