@@ -11,8 +11,8 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
+    environment: production
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -27,4 +27,4 @@ jobs:
         echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}"
     
     - name: Run pipeline
-      run: docker run --rm -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" lol-predict-ml-pipeline
+      run: docker run --rm -e SUPABASE_URL=$SUPABASE_URL -e SUPABASE_KEY=$SUPABASE_KEY lol-predict-ml-pipeline
