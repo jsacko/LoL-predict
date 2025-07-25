@@ -13,11 +13,18 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . -t lol-predict-ml-pipeline
+    - name: Echo secrets (test)
+      run: |
+        echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}"
+        echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}"
     
     - name: Run pipeline
-      run: docker run --rm -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} lol-predict-ml-pipeline
+      run: docker run --rm -e SUPABASE_URL="${{ secrets.SUPABASE_URL }}" -e SUPABASE_KEY="${{ secrets.SUPABASE_KEY }}" lol-predict-ml-pipeline
