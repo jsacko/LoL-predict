@@ -47,9 +47,9 @@ This project reflects a solid blend of data science, **MLOps**, and **full-stack
              │ evaluate_model.py   │  ← Evaluate & log metrics
              └────────┬────────────┘
                       ▼
-             ┌────────────────────────────┐
-             │ daily_predict.py (Airflow) │ ← Predict new matches daily
-             └────────┬───────────────────┘
+             ┌───────────────────┐
+             │ daily_predict.py  │ ← Predict results of upcoming matches daily
+             └────────┬──────────┘
                       ▼
              ┌─────────────────────┐
              │ Supabase Database   │ ← Store predictions
