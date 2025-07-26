@@ -96,8 +96,13 @@ For experiment tracking, I tested both MLflow and Weights & Biases, two leading 
    cd lol-predict-mlops
    ```
 
-2. **Build the Docker pipeline image**:
+2. **Build the API and pipeline Docker image**:
 
+   ```bash
+   bentoml build
+   bentoml containerize lol_predictor_service:latest
+   ```
+   Replace at the line 5 of docker-compose.yml with the new tag you obtained (e.g image: lol_predictor_service:j4233jlj4wdxf2h3)
    ```bash
    docker build -t lol-predict-ml-pipeline .
    ```
@@ -114,7 +119,7 @@ For experiment tracking, I tested both MLflow and Weights & Biases, two leading 
    * MLflow UI: [http://localhost:5000](http://localhost:5000)
    * Grafana : [http://localhost:3001](http://localhost:3001)
    * Prometheus : [http://localhost:9090](http://localhost:9090)
-   * BentoML API: [http://localhost:3000](http://localhost:3000) (if launched)
+   * BentoML API: [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -125,8 +130,8 @@ Once the API is running:
 ```http
 POST /predict
 {
-  "teamname_a": "G2 Esports",
-  "teamname_b": "Fnatic"
+  "teamnameA": "G2 Esports",
+  "teamnameB": "Fnatic"
 }
 ```
 
