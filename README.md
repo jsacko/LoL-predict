@@ -194,7 +194,7 @@ Response:
 
 **Julien SACKO** | Machine Learning Engineer 
 
-[LinkedIn](https://www.linkedin.com/in/julien-sacko/) · [GitHub](https://github.com/jsacko)
+[LinkedIn](https://www.linkedin.com/in/julien-sacko/)
 
 ---
 
