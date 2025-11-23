@@ -1,28 +1,51 @@
-# End-to-End MLOps Pipeline - League of Legends Match Outcome Prediction 
+# Cloud Azure End-to-End MLOps Pipeline - League of Legends Match Outcome Prediction 
 
-This project is a complete MLOps pipeline that predicts the outcome of **League of Legends esports matches**, from data collection to automated predictions and deployment. Designed for **production-level automation**, it simulates real-world workflows for machine learning systems. 
+This project is a complete MLOps pipeline that predicts the outcome of **League of Legends esports matches**, spanning data ingestion, cloud-native training pipelines, and automated deployment. Designed for **production-level scalability on Microsoft Azure**, it simulates a real-world enterprise machine learning workflow.
 
 ---
 
 ## 🔍 Project Overview
 
-The goal is to automatically train, evaluate, and serve a predictive model that forecasts the winner of a LoL match given two competing teams. The system runs daily, updates with new data, makes predictions, and stores results in a live database.
+The system automatically train, evaluate, and serve a predictive model that forecasts the winner of a LoL match given two competing teams. The system runs daily, updates with new data, makes predictions, and stores results in a live database.
 
 The model reaches **67% accuracy**, delivering both real-time predictions and daily batch forecasts, and is deployed through a live web platform where users can compete against the AI by submitting their own predictions.
 
-This project reflects a solid blend of data science, **MLOps**, and **full-stack engineering**, emphasizing **automation**, **scalability**, and **user interactio**n—just like in a real-world tech environment.
+This project reflects a solid blend of data science, **MLOps**, and **full-stack engineering**, emphasizing **automation**, **scalability**, and **user interactio**, just like in a real-world tech environment.
 
 ### ✅ Key Features
   
+- ☁️ **Azure ML Pipelines:** Core training and evaluation logic encapsulated in reproducible cloud pipelines.
 - 🔄 **End-to-End ETL** + Feature Engineering: extracted raw match and team statistics, cleaned and transformed data into meaningful features for modeling
 - 🎯 **Model Training & Experiment Tracking** with XGBoost, Hydra, MLflow, Weight & Biases
 - ✅ **Pipeline Versioning & Reproducibility** with DVC
 - 🌐 **API Deployment** with FastAPI and BentoML as a Dockerized microservice
 - ⏱️ **Airflow to orchestrates** daily batch predictions into a Supabase-hosted **PostegreSQL** database
 - 📊 **Monitoring** with Grafana + Prometheus: latency, failure rate, traffic
-- ☁️ **Cloud-ready architecture** (compatible with GCP Cloud Run / AWS SageMaker)
 - 💻 **Frontend App** to interactively deliver predictions and compete against the AI
 ---
+
+## ☁️ Deployment
+
+The prediction engine utilizes a cloud-native architecture on **Microsoft Azure Machine Learning**. This setup moves heavy computation from local execution to a managed MLOps environment, ensuring scalability, version control, and automated retraining capabilities.
+
+### Azure ML Training Pipeline
+The model lifecycle is defined as a directed acyclic graph (DAG) within Azure Designer. This pipeline handles:
+1.  **Data Ingestion:** Retrieval of historical match data.
+2.  **Preprocessing:** Splitting data for training and validation to prevent leakage.
+3.  **Modeling:** Training a **Two-Class Boosted Decision Tree**, optimized for tabular game data.
+4.  **Evaluation:** Automated scoring to track model drift.
+   
+<img width="805" height="716" alt="Capture d&#39;écran 2025-08-28 011727" src="https://github.com/user-attachments/assets/2c106dba-614a-4a15-afe6-91e32c6897d7" />
+
+### Production Integration
+The trained model is deployed as an inference endpoint which consumes real-time match data and serves predictions to the frontend application.
+
+* **Live Predictions:** The AI analyzes team compositions and historical stats to generate win probabilities for upcoming matches.
+* **Performance Tracking:** A live leaderboard tracks the model's performance against human users.
+
+| **Live Prediction Interface** | **Accuracy Leaderboard** |
+|:---:|:---:|
+|<img width="1128" height="752" alt="Capture d&#39;écran 2025-08-03 193550" src="https://github.com/user-attachments/assets/9e3e204d-dfdf-48c4-8ca9-69a462c55f38" />| <img width="553" height="581" alt="Capture d&#39;écran 2025-08-03 193618" src="https://github.com/user-attachments/assets/2f5e0418-06ca-489d-bbdf-43f914827364" /> |
 
 ## 🧱 Architecture
 
@@ -61,7 +84,8 @@ This project reflects a solid blend of data science, **MLOps**, and **full-stack
 
 
   BentoML or Flask API Server   →   Serve predictions for chosen teams (live)
-  Web App   →   Interface to compete against the AI by submitting your own predictions 
+  Web App   →   Interface to compete against the AI by submitting your own predictions
+
 ````
 
 ---
@@ -70,13 +94,13 @@ This project reflects a solid blend of data science, **MLOps**, and **full-stack
 
 | Category              | Tools & Frameworks                                                                 |
 |-----------------------|-------------------------------------------------------------------------------------|
+| **Cloud Infrastructure**   | Microsoft Azure Machine Learning · AWS S3 · Supabase (PostgreSQL)             |
 | **Languages**         | Python · JavaScript                                                                |
 | **ML & Data Science** | Scikit-learn · Numpy · Pandas · Seaborn                                            |
 | **Experiment Tracking** | MLflow · Weight and Biases (W&B)                                                 |
-| **MLOps & Orchestration** | Apache Airflow · BentoML · DVC · Hydra · Git                                  |
+| **MLOps & Orchestration** | Azure Pipelines · Apache Airflow · BentoML · DVC · Hydra · Git                 |
 | **API & Deployment**  | FastAPI · Docker · BentoML                                                         |
 | **Monitoring & Logging** | Grafana · Prometheus                                                            |
-| **Cloud & Storage**   | AWS S3 · PostgreSQL (Supabase)                                                                           |
 | **Frontend**          | Next.js · React                                                                    |
 
 
@@ -117,9 +141,9 @@ For experiment tracking, I tested both MLflow and Weights & Biases, two leading 
 
    * Airflow UI: [http://localhost:8080](http://localhost:8080)
    * MLflow UI: [http://localhost:5000](http://localhost:5000)
+   * Web App: [http://localhost:3000](http://localhost:3000)
    * Grafana : [http://localhost:3001](http://localhost:3001)
    * Prometheus : [http://localhost:9090](http://localhost:9090)
-   * BentoML API: [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -156,24 +180,13 @@ Response:
 
 ---
 
-## 📝 Future Improvements
-
-* Add **Model Drift Detection**
-* Improve frontend of the web application
-
----
-
 ## 📌 Project Status
 
+✅ **Production Ready:** Full pipeline deployed on Azure ML.
+✅ **Live Interface:** Web application connected to inference endpoints.
+✅ **Automated:** Daily data ingestion triggers via Airflow.
 
-✅ MVP complete with full automation
-
-🚀 Deployed locally with Docker
-
-🧪 Cloud-ready with AWS (ECR + ECS)
-
-🔧 The website is deployed ! 
-https://lol-predictions-kappa.vercel.app/
+**View the live deployment:** [lol-predictions-kappa.vercel.app](https://lol-predictions-kappa.vercel.app/)
 
 ---
 
