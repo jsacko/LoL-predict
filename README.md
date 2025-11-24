@@ -1,5 +1,18 @@
 # Cloud Azure End-to-End MLOps Pipeline - League of Legends Match Outcome Prediction 
 
+[![Azure ML](https://img.shields.io/badge/Azure_ML-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/en-us/services/machine-learning/)
+[![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Apache Airflow](https://img.shields.io/badge/Apache_Airflow-0172E3?style=for-the-badge&logo=apache-airflow&logoColor=white)](https://airflow.apache.org/)
+[![MLflow](https://img.shields.io/badge/MLflow-009A67?style=for-the-badge&logo=mlflow&logoColor=white)](https://mlflow.org/)
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/stable/)
+[![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Numpy](https://img.shields.io/badge/Numpy-013243?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+![SQL](https://img.shields.io/badge/SQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+
 This project is a complete MLOps pipeline that predicts the outcome of **League of Legends esports matches**, spanning data ingestion, cloud-native training pipelines, and automated deployment. Designed for **production-level scalability on Microsoft Azure**, it simulates a real-world enterprise machine learning workflow.
 
 ---
