@@ -321,87 +321,139 @@ def create_features_from_df(df, cols_to_be_unique, cfg, include_objects_columns=
     
     return new_df, dict_stats
 
-def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame: 
-    url_leaguepedia = cfg["data"]["url_leaguepedia_api"]
+def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
+    """Fetch upcoming matches using mwrogue.cargo_client and compute features."""
     features = cfg["data"]["features"]
-    tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
-    print("tomorrow",tomorrow)
+    now = datetime.now(timezone.utc)
+    end = now + timedelta(days=30)
 
-    # Prepare the parameters for the API request
     params = {
-    "action": "cargoquery",
-    "format": "json",
-    "tables": "MatchSchedule",
-    "fields": "MatchSchedule.Team1,MatchSchedule.Team2,MatchSchedule.DateTime_UTC,MatchSchedule.OverviewPage,MatchSchedule.BestOf,MatchSchedule.Round",
-    "where": f"MatchSchedule.DateTime_UTC >= '{tomorrow}'",
-    "order_by": "MatchSchedule.DateTime_UTC ASC",
-    "limit": "500"  # Augmente si nécessaire
+        "token": "h_wz4VsG-jUAyJOG71PKnym-oY0w4BRDwRyCtnDZ6fL-kZhgORc",
+        "sort": "begin_at",
+        "range[begin_at]": f"2025-11-24T14:00:00Z,2025-12-24T14:00:00Z",
+        #"range[begin_at]": f"{now.isoformat()},{end.isoformat()}",
+        "page[size]": 50
     }
-    response = requests.get(url=url_leaguepedia, params=params)
-
-    if response.status_code == 200:
-        results = response.json()["cargoquery"]
-        # Étape 2 : Grouper les matchs par date (UTC, sans l'heure)
-        match_data = [
-            {
-                "teamnameA": m["title"]["Team1"],
-                "teamnameB": m["title"]["Team2"],
-                "date": m["title"]["DateTime UTC"],
-                "playoffs": 0 if m["title"]["Round"] is None else 1,
-                "bo_type": m["title"]["BestOf"],
-                "league": m["title"]["OverviewPage"].split("/")[0]
-            }
-            for m in results
-        ]
-        df = pd.DataFrame(match_data)
-        df = df[~df["league"].isin(cfg["data"]["academic_leagues"])] # Exclude academic leagues
-        df["date"] = pd.to_datetime(df["date"])
-        
-        # Étape 3 : Trouver la date de la prochaine journée (la première date du DataFrame)
-        if not df.empty:
-            # Take the game of the 3 next days
-            next_match_day = df["date"].min()
-            df_next_day = df[(df["date"] >= next_match_day) & (df["date"] <= next_match_day + timedelta(days=30))]
-        else:
-            logging.info("No matches upcoming for")
-            df_next_day = pd.DataFrame()
-    else:
-        logging.error(f"Failed to fetch data from Leaguepedia API: {response.status_code}")
-        return pd.DataFrame()
     
-    def create_feature_by_teamname(row, dict_stats=dict_stats):
+    url = "https://api.pandascore.co/lol/matches"
+    r = requests.get(url, params=params)
+    r.raise_for_status()
+    data = r.json()
+    print("data", data[0])
+    print(f"{now.isoformat()},{end.isoformat()}")
+    rows = []
+
+    for m in data:
+        if m["status"] == "running":
+            continue
+
+        # Extract team names
+        team1 = m["opponents"][0]["opponent"]["name"] if len(m["opponents"]) > 0 else None
+        team2 = m["opponents"][1]["opponent"]["name"] if len(m["opponents"]) > 1 else None
+
+        # Convert number_of_games into BoX format
+        box = m['number_of_games'] if m["number_of_games"] else None
+
+        rows.append({
+            # IDENTICAL FIELD NAMES to your previous mwrogue function
+            "teamnameA": team1,
+            "teamnameB": team2,
+            "date": m["begin_at"],
+            "playoffs": 0,
+            "bo_type": box,            
+            "league": m["league"]["name"] if m["league"] else None,            
+            
+        })
+    df = pd.DataFrame(rows)
+    
+    if not df.empty:
+        df["date"] = pd.to_datetime(df["date"])
+        print("row 0", df.iloc[0,:])
+    else:
+        print("df empty", df)
+    # ----------------------------------------------------
+    # 4) GET MATCHES FROM THE NEXT DAY (OR NEXT 30 DAYS)
+    # ----------------------------------------------------
+    next_match_day = df["date"].min()
+    df_next = df[(df["date"] >= next_match_day) &
+                 (df["date"] <= next_match_day + timedelta(days=30))]
+
+    # ----------------------------------------------------
+    # 5) FEATURE ENGINEERING — IDENTICAL TO YOUR FUNCTION
+    # ----------------------------------------------------
+    def create_feature_by_teamname(row):
+        A = row.teamnameA
+        B = row.teamnameB
+
         for col in features:
-            if (col.endswith("_diff")):
-                if (col.startswith("win_rate_last_")):
+            # -------- DIFFERENTIAL FEATURES --------
+            if col.endswith("_diff"):
+
+                # Rolling winrate diff “win_rate_last_X_diff”
+                if col.startswith("win_rate_last_"):
                     window = int(col.split("_")[3])
-                    row[col] = np.mean(dict_stats.get(row.teamnameA).get("result")[-window:]) - np.mean(dict_stats.get(row.teamnameB).get("result")[-window:])
-                elif (col == "win_rate_diff"):
-                    row[col] = np.mean(dict_stats.get(row.teamnameA).get("result")) - np.mean(dict_stats.get(row.teamnameB).get("result"))
-                elif (col == "win_rate_bo_diff"):
-                    bo_A = dict_stats[row.teamnameA].get(f"bo_{row['bo_type']}")
-                    bo_B = dict_stats[row.teamnameB].get(f"bo_{row['bo_type']}")
-                    win_rate_bo_A = np.mean(bo_A) if bo_A is not None and len(bo_A) >= 1 else np.mean(dict_stats.get(row.teamnameA).get("result"))
-                    win_rate_bo_B = np.mean(bo_B) if bo_B is not None and len(bo_B) >= 1 else np.mean(dict_stats.get(row.teamnameB).get("result"))
-                    row[col] = win_rate_bo_A - win_rate_bo_B
-                elif (col == "nb_games_diff"):
-                    row[col] = len(dict_stats.get(row.teamnameA).get("result")) - len(dict_stats.get(row.teamnameB).get("result"))
-                elif (col == "win_streak_diff"):
-                    row[col] = dict_stats.get(row.teamnameA).get("win_streak")[-1] - dict_stats.get(row.teamnameB).get("win_streak")[-1]
+                    row[col] = (
+                        np.mean(dict_stats[A]["result"][-window:])
+                        - np.mean(dict_stats[B]["result"][-window:])
+                    )
+
+                # Global winrate diff
+                elif col == "win_rate_diff":
+                    row[col] = (
+                        np.mean(dict_stats[A]["result"])
+                        - np.mean(dict_stats[B]["result"])
+                    )
+
+                # Best-of winrate diff
+                elif col == "win_rate_bo_diff":
+                    bo_type = row["bo_type"]
+                    bo_A = dict_stats[A].get(f"bo_{bo_type}")
+                    bo_B = dict_stats[B].get(f"bo_{bo_type}")
+
+                    winA = np.mean(bo_A) if bo_A else np.mean(dict_stats[A]["result"])
+                    winB = np.mean(bo_B) if bo_B else np.mean(dict_stats[B]["result"])
+
+                    row[col] = winA - winB
+
+                # Number of games diff
+                elif col == "nb_games_diff":
+                    row[col] = (
+                        len(dict_stats[A]["result"])
+                        - len(dict_stats[B]["result"])
+                    )
+
+                # Win streak diff
+                elif col == "win_streak_diff":
+                    row[col] = (
+                        dict_stats[A]["win_streak"][-1]
+                        - dict_stats[B]["win_streak"][-1]
+                    )
+
+                # Generic stat diff (e.g. gold_diff, kda_diff)
                 else:
-                    row[col] = np.mean(dict_stats.get(row.teamnameA).get(col[:-5])) - np.mean(dict_stats.get(row.teamnameB).get(col[:-5]))
-            elif (col == "h2h_win_rate_AvsB"):
-                if (row.teamnameA < row.teamnameB):
-                    h2h_key = row.teamnameA + row.teamnameB
-                    h2h_win_rate_AvsB = np.mean(dict_stats[h2h_key]) if dict_stats.get(h2h_key) else 0.5
+                    base = col[:-5]
+                    row[col] = (
+                        np.mean(dict_stats[A][base])
+                        - np.mean(dict_stats[B][base])
+                    )
+
+            # -------- H2H FEATURE --------
+            elif col == "h2h_win_rate_AvsB":
+                if A < B:
+                    key = A + B
+                    row[col] = np.mean(dict_stats.get(key, [0.5]))
                 else:
-                    h2h_key = row.teamnameB + row.teamnameA 
-                    h2h_win_rate_AvsB = (1 - np.mean(dict_stats[h2h_key])) if dict_stats.get(h2h_key) else 0.5
-                row["h2h_win_rate_AvsB"] = h2h_win_rate_AvsB
+                    key = B + A
+                    row[col] = 1 - np.mean(dict_stats.get(key, [0.5]))
+
         return row
-    df_next_day = df_next_day[df_next_day.teamnameA.isin(dict_stats) & (df_next_day.teamnameB.isin(dict_stats)) ]
-    df_next_day = df_next_day.apply(create_feature_by_teamname, axis=1).reset_index()
-    df_next_day = df_next_day.drop(columns=["index"])
-    return df_next_day
+
+    df_next = df_next[df_next.teamnameA.isin(dict_stats) &
+                      df_next.teamnameB.isin(dict_stats)]
+
+    df_next = df_next.apply(create_feature_by_teamname, axis=1).reset_index(drop=True)
+
+    return df_next
 
 
 @hydra.main(config_path="../../configs", config_name="config", version_base="1.3") # type: ignore
