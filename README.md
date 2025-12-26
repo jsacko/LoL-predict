@@ -35,6 +35,7 @@ This project reflects a solid blend of data science, **MLOps**, and **full-stack
 - ⏱️ **Airflow to orchestrates** daily batch predictions into a Supabase-hosted **PostegreSQL** database
 - 📊 **Monitoring** with Grafana + Prometheus: latency, failure rate, traffic
 - 💻 **Frontend App** to interactively deliver predictions and compete against the AI
+- **View the live deployment** [lol-predictions-kappa.vercel.app](https://lol-predictions-kappa.vercel.app/)
 ---
 
 ## ☁️ Deployment
@@ -59,6 +60,8 @@ The trained model is deployed as an inference endpoint which consumes real-time 
 | **Live Prediction Interface** | **Accuracy Leaderboard** |
 |:---:|:---:|
 |<img width="1128" height="752" alt="Capture d&#39;écran 2025-08-03 193550" src="https://github.com/user-attachments/assets/9e3e204d-dfdf-48c4-8ca9-69a462c55f38" />| <img width="553" height="581" alt="Capture d&#39;écran 2025-08-03 193618" src="https://github.com/user-attachments/assets/2f5e0418-06ca-489d-bbdf-43f914827364" /> |
+
+**View the live deployment:** [lol-predictions-kappa.vercel.app](https://lol-predictions-kappa.vercel.app/)
 
 ## 🧱 Architecture
 
@@ -193,24 +196,8 @@ Response:
 
 ---
 
-## 📌 Project Status
-
-✅ **Production Ready:** Full pipeline deployed on Azure ML.
-✅ **Live Interface:** Web application connected to inference endpoints.
-✅ **Automated:** Daily data ingestion triggers via Airflow.
-
-**View the live deployment:** [lol-predictions-kappa.vercel.app](https://lol-predictions-kappa.vercel.app/)
-
----
-
 ## 👨‍💻 Author
 
 **Julien SACKO** | Machine Learning Engineer 
 
 [LinkedIn](https://www.linkedin.com/in/julien-sacko/)
-
----
-
-## ⭐️ Show Your Support
-
-If you find this project helpful, feel free to ⭐️ the repo and connect with me on LinkedIn!
