@@ -331,8 +331,7 @@ def create_features_from_tomorrow_game(dict_stats, cfg) -> pd.DataFrame:
     params = {
         "token": "h_wz4VsG-jUAyJOG71PKnym-oY0w4BRDwRyCtnDZ6fL-kZhgORc",
         "sort": "begin_at",
-        "range[begin_at]": f"2025-11-24T14:00:00Z,2025-12-24T14:00:00Z",
-        #"range[begin_at]": f"{now.isoformat()},{end.isoformat()}",
+        "range[begin_at]": f"{now.isoformat()},{end.isoformat()}",
         "page[size]": 50
     }
     
