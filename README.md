@@ -19,20 +19,20 @@ This project is a complete MLOps pipeline that predicts the outcome of **League 
 
 ## 🔍 Project Overview
 
-The system automatically train, evaluate, and serve a predictive model that forecasts the winner of a LoL match given two competing teams. The system runs daily, updates with new data, makes predictions, and stores results in a live database.
+The system automatically trains, evaluates, and serves a predictive model that forecasts the winner of a LoL match given two competing teams. The system runs daily, updates with new data, makes predictions, and stores results in a live database.
 
 The model reaches **67% accuracy**, delivering both real-time predictions and daily batch forecasts, and is deployed through a live web platform where users can compete against the AI by submitting their own predictions.
 
-This project reflects a solid blend of data science, **MLOps**, and **full-stack engineering**, emphasizing **automation**, **scalability**, and **user interactio**, just like in a real-world tech environment.
+This project reflects a solid blend of data science, **MLOps**, and **full-stack engineering**, emphasizing **automation**, **scalability**, and **user interaction**, just like in a real-world tech environment.
 
 ### ✅ Key Features
   
 - ☁️ **Azure ML Pipelines:** Core training and evaluation logic encapsulated in reproducible cloud pipelines.
-- 🔄 **End-to-End ETL** + Feature Engineering: extracted raw match and team statistics, cleaned and transformed data into meaningful features for modeling
-- 🎯 **Model Training & Experiment Tracking** with XGBoost, Hydra, MLflow, Weight & Biases
+- 🔄 **End-to-End ETL** + Feature Engineering: raw match and team statistics are extracted, cleaned, and transformed into meaningful features for modeling
+- 🎯 **Model Training & Experiment Tracking** with XGBoost, Hydra, MLflow, Weights & Biases
 - ✅ **Pipeline Versioning & Reproducibility** with DVC
 - 🌐 **API Deployment** with FastAPI and BentoML as a Dockerized microservice
-- ⏱️ **Airflow to orchestrates** daily batch predictions into a Supabase-hosted **PostegreSQL** database
+- ⏱️ **Airflow orchestrates** daily batch predictions into a Supabase-hosted **PostgreSQL** database
 - 📊 **Monitoring** with Grafana + Prometheus: latency, failure rate, traffic
 - 💻 **Frontend App** to interactively deliver predictions and compete against the AI
 - **View the live deployment** [lol-predictions-kappa.vercel.app](https://lol-predictions-kappa.vercel.app/)
@@ -63,11 +63,29 @@ The trained model is deployed as an inference endpoint which consumes real-time 
 
 **View the live deployment:** [lol-predictions-kappa.vercel.app](https://lol-predictions-kappa.vercel.app/)
 
+---
+### 🗄️ SQL Relational Data Schema 
+
+I implemented a normalized relational schema in **PostgreSQL (Supabase)**. This architecture separates entities into specialized tables to optimize for both real-time inference and historical analysis.
+
+| Table | Purpose | Key Columns / Features |
+| :--- | :--- | :--- |
+| **matches** | **Feature Store** & Metadata | `bo_id`, `teamname_a/b`, `opp_xpat15_diff`, `earned_gpm_diff` |
+| **predictions** | Transactional Forecast Log | `bo_id`, `user_id`, `prediction` (0 or 1) |
+| **scores** | Aggregated Performance | `user_id`, `accuracy`, `score`, `nb_predictions` |
+| **users** | Auth & Profile Management | `id`, `email`, `pseudo`, `created_at` |
+
+* **Feature Engineering:** The `matches` table serves as a central repository for granular game metrics used for both training and live inference.
+* **Daily Aggregation:** The `scores` table is updated via an automated pipeline, allowing the frontend to serve global leaderboards instantly without expensive on-the-fly joins.
+
+<img width="948" height="797" alt="image" src="https://github.com/user-attachments/assets/dd0c3f8b-da39-4274-b0d6-2d4c04631ebc" />
+
+
 ## 🧱 Architecture
 
 ```text
       ┌───────────────────────────────────┐
-      │   Historical Data & new matches   │
+      │   Historical Data & New matches   │
       └───────────────┬───────────────────┘
                       ▼
              ┌─────────────────────┐
@@ -113,7 +131,7 @@ The trained model is deployed as an inference endpoint which consumes real-time 
 | **Cloud Infrastructure**   | Microsoft Azure Machine Learning · AWS S3 · Supabase (PostgreSQL)             |
 | **Languages**         | Python · JavaScript                                                                |
 | **ML & Data Science** | Scikit-learn · Numpy · Pandas · Seaborn                                            |
-| **Experiment Tracking** | MLflow · Weight and Biases (W&B)                                                 |
+| **Experiment Tracking** | MLflow · Weights and Biases (W&B)                                                 |
 | **MLOps & Orchestration** | Azure Pipelines · Apache Airflow · BentoML · DVC · Hydra · Git                 |
 | **API & Deployment**  | FastAPI · Docker · BentoML                                                         |
 | **Monitoring & Logging** | Grafana · Prometheus                                                            |
@@ -142,12 +160,12 @@ For experiment tracking, I tested both MLflow and Weights & Biases, two leading 
    bentoml build
    bentoml containerize lol_predictor_service:latest
    ```
-   Replace at the line 5 of docker-compose.yml with the new tag you obtained (e.g image: lol_predictor_service:j4233jlj4wdxf2h3)
+   Replace the line 5 of docker-compose.yml with the new tag you obtained (e.g image: lol_predictor_service:j4233jlj4wdxf2h3)
    ```bash
    docker build -t lol-predict-ml-pipeline .
    ```
 
-3. **Start Airflow, MLflow and all the service associated via Docker Compose**:
+3. **Start Airflow, MLflow, and all the services associated via Docker Compose**:
 
    ```bash
    docker-compose up --build
@@ -191,7 +209,7 @@ Response:
 * Airflow runs the full DAG every day at **2 AM UTC**.
 * `make_dataset`, `build_features`, `train_model`, `evaluate_model` and `daily_predict.py` run in **DockerOperator** containers.
 * `daily_predict.py` makes predictions and stores results in **Supabase**.
-* You MUST use your own supabase database and set your api key and database url in a .env file at the root of the project to run `daily_predict.py`.
+* You MUST use your own supabase database and set your API key and database url in a .env file at the root of the project to run `daily_predict.py`.
 * You can create yours here : https://supabase.com/ 
 
 ---
